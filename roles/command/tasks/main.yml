@@ -1,0 +1,98 @@
+---
+- name: Command Setup
+  hosts: localhost
+
+  tasks:
+  - name: 'Update and upgrade apt packages'
+    become: yes
+    apt:
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400
+  - name: 'Install packages'
+    become: yes
+    apt:
+      pkg:
+        - python3-pip
+        - git
+        - openssh-client 
+
+  - name: Check if SSH key's exists
+    stat:
+      path: ~/.ssh/id_rsa
+    register: register_name
+
+  - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+    community.crypto.openssh_keypair:
+      path: ~/.ssh/id_rsa
+    when: not register_name.stat.exists
+
+  - name: "Add 192.168.2.200 Goddess if it does not exist"
+    become: yes
+    become_method: sudo
+    tags: example2
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.2.200 Goddess"
+      state: present
+      backup: yes
+    register: checkect1
+
+  - name: "Add 192.168.2.201 Platnium if it does not exist"
+    become: yes
+    become_method: sudo
+    tags: example2
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.2.201 Platnium"
+      state: present
+      backup: yes
+    register: checkect1
+
+  - name: "Add 192.168.2.202 Gold if it does not exist"
+    become: yes
+    become_method: sudo
+    tags: example2
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.2.202 Gold"
+      state: present
+      backup: yes
+    register: checkect1
+
+  - name: "Add 192.168.2.203 Silver if it does not exist"
+    become: yes
+    become_method: sudo
+    tags: example2
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.2.203 Silver"
+      state: present
+      backup: yes
+    register: checkect1
+
+  - name: "Add 192.168.2.204 Copper if it does not exist"
+    become: yes
+    become_method: sudo
+    tags: example2
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.2.204 Copper"
+      state: present
+      backup: yes
+    register: checkect1
+
+  - name: Push Key's to servers.
+    ansible.builtin.command: ssh-copy-id astra@Goddess
+  
+  - name: Push Key's to servers.
+    ansible.builtin.command: ssh-copy-id dragon@Platnium
+    
+  - name: Push Key's to servers.
+    ansible.builtin.command: ssh-copy-id dragon@Gold
+  
+  - name: Push Key's to servers.
+    ansible.builtin.command: ssh-copy-id dragon@Silver
+    
+  - name: Push Key's to servers.
+    ansible.builtin.command: ssh-copy-id dragon@Copper
